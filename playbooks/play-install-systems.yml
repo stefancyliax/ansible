@@ -1,0 +1,27 @@
+- name: Install systems
+  gather_facts: yes
+  hosts: Infra
+  become: yes
+
+  vars:
+    monitoring_server: ## TODO 
+    
+  roles:
+    - ../roles/ping-all ## test
+    - ../roles/provisioning/team-users
+    - ../roles/monitoring/monitoring-client
+    - ../roles/monitoring/portainer-agent
+      
+      
+      
+###########################################################################################        
+- name: start Jenkins Inboud Agents on Nodes
+  gather_facts: yes
+  hosts: Infra
+  become: yes
+
+  vars:
+    jenkins_master_url: ## TODO
+
+  roles:
+    - ../roles/provisioning/jenkins-worker

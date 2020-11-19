@@ -1,0 +1,12 @@
+[submodule "roles/galaxy/ansible-role-docker"]
+	path = roles/galaxy/ansible-role-docker
+	url = https://github.com/geerlingguy/ansible-role-docker.git
+[submodule "roles/galaxy/ansible-role-nvidia-driver"]
+	path = roles/galaxy/ansible-role-nvidia-driver
+	url = https://github.com/NVIDIA/ansible-role-nvidia-driver.git
+[submodule "roles/galaxy/ansible-role-nvidia-docker"]
+	path = roles/galaxy/ansible-role-nvidia-docker
+	url = https://github.com/NVIDIA/ansible-role-nvidia-docker.git
+[submodule "roles/galaxy/ansible-role-pip"]
+	path = roles/galaxy/ansible-role-pip
+	url = https://github.com/geerlingguy/ansible-role-pip.git

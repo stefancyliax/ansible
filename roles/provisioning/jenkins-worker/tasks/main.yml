@@ -1,0 +1,89 @@
+---
+# tasks file for jenkins-worker
+# TODO: Add Jenkins worker to jenkins server
+
+    - name: Create group jenkins
+      group:
+        name: jenkins
+        state: present
+        # gid: 1000
+
+    - name: Add user jenkins
+      user:
+        name: jenkins
+        group: jenkins
+        groups: sudo, docker
+        append: no
+        create_home: yes
+        skeleton: /etc/skel
+        shell: /bin/bash
+        system: yes
+        # uid: 1000
+        password: ## TODO
+ 
+
+    - name: create work folder for jenkins agent deployment
+      file: 
+        path: /home/jenkins/agent
+        state: directory
+        group: jenkins
+        owner: jenkins
+
+
+    - name: create .docker folder for docker credentials sharing between container and host
+      file: 
+        path: /home/jenkins/.docker
+        state: directory
+        group: jenkins
+        owner: jenkins
+
+
+    - name: copy docker-compose for inbound agent to system
+      copy:
+        src: docker-compose.yml
+        dest: /home/jenkins/docker-compose.yml
+        owner: jenkins
+        group: jenkins
+        mode: '0444'
+    
+    - name: copy set_environment to inbound agent
+      copy:
+        src: set_environment.sh
+        dest: /home/jenkins/set_environment.sh
+        owner: jenkins
+        group: jenkins
+        mode: '0554'
+    
+    - name: run set_environment to create .env file
+      command: 
+        chdir: /home/jenkins/
+        cmd: sh /home/jenkins/set_environment.sh
+
+    - name: set agent name in .env with with correct hostname of system
+      lineinfile:
+        path: /home/jenkins/.env
+        insertafter: EOF
+        # regexp: '^AGENTNAME=\"\"'
+        line: 'AGENTNAME={{ inventory_hostname }}'
+
+    - name: set secret in .env with with correct one
+      lineinfile:
+        path: /home/jenkins/.env
+        insertafter: EOF
+        # regexp: '^SECRET=\"\"'
+        line: 'SECRET={{ JENKINSSECRET }}'
+
+
+    - name: set Jenkins master in .env
+      lineinfile:
+        path: /home/jenkins/.env
+        insertafter: EOF
+        line: 'URLJENKINSMASTER={{ jenkins_master_url }}'
+    
+
+    - name: start docker-compose
+      command:
+        chdir: /home/jenkins/
+        cmd: docker-compose up -d
+  
+

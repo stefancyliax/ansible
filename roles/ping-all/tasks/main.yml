@@ -1,0 +1,8 @@
+---
+# tasks file for ping-all
+
+## Add user group
+    - name: ping target
+      ping:
+        # data: crash
+

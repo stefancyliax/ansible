@@ -1,0 +1,16 @@
+version: "2"
+
+services:
+
+    ansible:
+        container_name: ansible
+        build:
+            context: .
+        command: /bin/bash
+        volumes:
+            - .\etc\ansible.cfg:/etc/ansible/ansible.cfg:ro
+            - .\etc\hosts:/etc/ansible/hosts
+            - .\playbooks\:/home/ansible/playbooks/
+            - .\roles\:/home/ansible/roles/
+            - .\.ssh:/home/ansible/.ssh
+            

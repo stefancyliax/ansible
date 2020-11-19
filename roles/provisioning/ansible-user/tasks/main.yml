@@ -1,0 +1,38 @@
+---
+# tasks file for ansible-user
+
+## add ansible user for remote management
+    - name: Create group ansible
+      group:
+        name: ansible
+        state: present
+
+    - name: Add user ansible
+      user:
+        name: ansible
+        group: ansible
+        groups: sudo
+        append: no
+        system: yes
+        password: "{{ password_for_ansible_user }}" #for use from playbook # sudo password
+ 
+    - name: disable login via password for user ansible
+      blockinfile:
+        path: /etc/ssh/sshd_config
+        block: |
+          Match User ansible
+          PasswordAuthentication no
+
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: ansible
+        state: present
+        key: "{{ lookup('file', 'id_ed25519.pub') }}"
+
+    - name: enable passwordless sudo 
+      copy:
+        src: 01-ansible
+        dest: /etc/sudoers.d/01-ansible
+        owner: root
+        group: root
+        mode: '0440'

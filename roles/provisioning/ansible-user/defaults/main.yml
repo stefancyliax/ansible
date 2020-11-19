@@ -1,0 +1,5 @@
+---
+# defaults file for ansible-user
+
+# default password for user ansible. This password is random and hashed! SET YOUR OWN IN THE PLAYBOOK!
+password_for_ansible_sudo: "$6$sdfsdfsdsvse3454$mVmzFlKmfky3A67WMzsBodZSehmHlW3wc8zOQtDhD.GtqNYhFGYJAP3yIIops/9wRyB.qIteFdfTSK975.ns41"

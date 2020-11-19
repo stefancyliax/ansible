@@ -1,0 +1,21 @@
+- name: Provision system for use with Ansible repository and pipeline. Install common tools and add ansible user for later maintanance use
+  gather_facts: yes
+  hosts: Infra
+  become: yes
+
+  vars:
+    docker_users:
+        - ansible
+    docker_install_compose: true
+    pip_package: python3-pip
+    pip_install_packages:
+        - name: docker # does: pip install docker to allow ansible to start docker containers
+
+    password_for_ansible_user: ### TODO
+
+
+  roles:
+    - ../roles/ping-all
+    - ../roles/provisioning/ansible-user
+    - ../roles/galaxy/ansible-role-docker
+    - ../roles/galaxy/ansible-role-pip

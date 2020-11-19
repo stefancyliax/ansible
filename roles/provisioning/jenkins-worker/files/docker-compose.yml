@@ -1,0 +1,21 @@
+version: "2.4"
+services:
+  jenkins-inbound-agent:
+    image: jenkins/inbound-agent
+    restart: always
+    init: true
+    environment:
+      - JENKINS_URL=${URLJENKINSMASTER}
+      - JENKINS_SECRET=${SECRET}
+      - JENKINS_AGENT_NAME=${AGENTNAME}
+      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+      - JENKINS_WEB_SOCKET=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DPATH}:/usr/bin/docker #- $(which docker):$(which docker)
+      - ${DCPATH}:/usr/local/bin/docker-compose # - $(which docker-compose):$(which docker-compose)
+      - /home/jenkins/agent:/home/jenkins/agent
+      - /home/jenkins/.docker:/.docker
+    user: ${IDJENKINSUSER}:${IDJENKINSGROUP}
+    group_add:
+      - ${GID}

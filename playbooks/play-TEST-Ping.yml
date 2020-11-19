@@ -1,0 +1,7 @@
+- name: Simple Ping to testing purpose
+  gather_facts: yes
+  hosts: Infra
+  become: yes
+
+  roles:
+    - ../roles/ping-all

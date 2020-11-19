@@ -1,0 +1,75 @@
+---
+- name: Install required software docker
+  import_role:
+    name: galaxy/geerlingguy.docker
+
+- name: Install required software pip
+  import_role:
+    name: galaxy/geerlingguy.pip
+
+#     - name: Install docker on arm because its a raspberry
+#       import_role: 
+#         name: geerlingguy.docker_arm
+#       when: ansible_machine == 'armv7l'
+
+#     - name: fix for a strange thing with "No module named ssl_match_hostname" when importing docker in python
+#       command: sudo cp -r /usr/local/lib/python2.7/dist-packages/backports/ssl_match_hostname/ /usr/lib/python2.7/dist-packages/backports
+#       when: ansible_machine == 'armv7l'
+
+#     - name: Install docker on x86
+#       import_role:
+#         name: geerlingguy.docker
+#       when: not ansible_machine == 'armv7l'
+
+
+- name: create folder structure for Influxdb
+  file:
+    path: /etc/monitoring-backend/influxdb
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: '0755'
+
+- name: start Influxdb docker container
+  docker_container:
+    name: influxdb
+    image: influxdb:1.7.8
+    restart_policy: always
+    ports:
+      - "8086:8086"
+      - "8083:8083"
+    volumes:
+      - /etc/monitoring-backend/influxdb:/var/lib/influxdb
+
+- name: create Influx databases for monitoring with telegraf
+  influxdb_database:
+    hostname: "{{inventory_hostname}}"
+    database_name: telegraf
+
+- name: create folder structure for grafana
+  file:
+    path: /etc/monitoring-backend/grafana
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: '0777'
+
+- name: start Grafana docker container
+  docker_container:
+    name: grafana
+    image: grafana/grafana:6.4.3
+    restart_policy: always
+    ports:
+    - "3000:3000"
+    volumes:
+      - /etc/monitoring-backend/grafana:/var/lib/grafana
+    env:
+      GF_INSTALL_PLUGINS: natel-discrete-panel, grafana-clock-panel, petrslavotinek-carpetplot-panel, neocat-cal-heatmap-panel, natel-plotly-panel
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_NAME: "Main Org."
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+    restart: yes
+
+
+

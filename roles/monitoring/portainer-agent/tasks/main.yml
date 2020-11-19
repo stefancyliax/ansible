@@ -1,0 +1,15 @@
+---
+# tasks file for portainer
+
+- name: start portainer agent
+  docker_container:
+    name: portainer-agent
+    image: portainer/agent:1.6.1
+    restart_policy: always
+    ports:
+      - "9001:9001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    
+

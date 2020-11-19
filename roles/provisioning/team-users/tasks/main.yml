@@ -1,0 +1,22 @@
+---
+# tasks file for team-users
+
+## Add user group
+  - name: create group
+    group:
+      name: usergroup
+
+  - name: add user
+    user:
+      name: user
+      group: usergroup
+      groups: sudo, docker
+      append: no
+      create_home: yes
+      skeleton: /etc/skel
+      shell: /bin/bash
+      system: no
+      password: ## TODO
+
+
+## its possible to add other users here

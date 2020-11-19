@@ -1,0 +1,44 @@
+---
+# tasks file for monitoring-client
+
+- name: create telegraf folder under /etc
+  file:
+    path: /etc/monitoring
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: '0444'
+
+- name: copy telegraf config to target
+  copy:
+    src: telegraf.conf
+    dest: /etc/monitoring/telegraf.conf
+    owner: ansible
+    group: ansible
+    mode: '0444'
+
+- name: replace hostname in telegraf config with correct hostname of system
+  lineinfile:
+    path: /etc/monitoring/telegraf.conf
+    regexp: '^\s\shostname\s=\s\"\"'
+    line: '  hostname = "{{ inventory_hostname }}"'
+
+- name: replace influxdb server in telegraf config with correct one
+  lineinfile:
+    path: /etc/monitoring/telegraf.conf
+    regexp: '^\s\surls\s=\s'
+    line: '  urls = ["http://{{ monitoring_server }}:8086"]'
+    # when: monitoring_server != []
+
+- name: start telegraf docker container
+  docker_container:
+    name: telegraf
+    image: telegraf:1.15
+    restart_policy: always
+    volumes:
+      - /etc/monitoring/telegraf.conf:/etc/telegraf/telegraf.conf
+      - /var/run/docker.sock:/var/run/docker.sock
+    hostname: "{{ inventory_hostname }}"
+# TODO: handler to restart docker container in case there was a change in the config
+    restart: yes
+

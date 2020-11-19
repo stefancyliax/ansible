@@ -1,0 +1,10 @@
+---
+# vars file for monitoring-backend
+docker_install_compose: false
+docker_users:
+  - ansible
+pip_package: python3-pip
+pip_install_packages:
+  - name: docker # does: pip install docker to allow ansible to start docker containers
+  - name: influxdb # does: pip install influxdb to allow ansible to create database in influxdb
+
